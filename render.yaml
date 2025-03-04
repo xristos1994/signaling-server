@@ -1,0 +1,11 @@
+services:
+  - name: peerjs-signaling
+    type: web
+    runtime: node
+    repo: https://github.com/xristos1994/signaling-server
+    branch: main
+    startCommand: node server.js
+    plan: free
+    envVars:
+      - key: PORT
+        value: 10000
