@@ -36,5 +36,5 @@ app.get("/", (req, res) => {
 
 // Start server
 server.listen(PORT, () => {
-    console.log(`🚀 Signaling server running on port ${PORT}`);
+    console.log(`🚀 Signaling server running on port: ${PORT}`);
 });
