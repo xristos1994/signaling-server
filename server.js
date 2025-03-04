@@ -1,25 +1,40 @@
 const express = require("express");
-const { PeerServer } = require("peer");
+const { ExpressPeerServer } = require("peer");
+const cors = require("cors");
+const http = require("http");
 
 const app = express();
-const cors = require("cors");
+const PORT = process.env.PORT || 9000;
+
 app.use(cors());
 
-// Create PeerJS Signaling Server
-const peerServer = PeerServer({
-  port: 9000,         // Port for WebSocket communication
-  path: "/ck-volleyball-stats",     // Custom path for PeerJS connections
-  allow_discovery: true, // Allow listing connected peers
+// Create an HTTP server for PeerJS
+const server = http.createServer(app);
+
+// Attach ExpressPeerServer to the HTTP server
+const peerServer = ExpressPeerServer(server, {
+    path: "/myapp",  // Ensure this matches the frontend path
+    allow_discovery: true,
+    debug: true
 });
 
+// Use PeerJS as middleware (correct path)
 app.use("/peerjs", peerServer);
 
-app.get("/", (req, res) => {
-  res.send("✅ PeerJS Signaling Server is Running!");
+peerServer.on("connection", (client) => {
+    console.log(`🟢 New Peer Connected: ${client.getId()}`);
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`🚀 Express Server: http://localhost:${PORT}`);
-  console.log(`🔗 PeerJS Signaling Server: ws://localhost:9000/myapp`);
+peerServer.on("disconnect", (client) => {
+    console.log(`🔴 Peer Disconnected: ${client.getId()}`);
+});
+
+// Default route
+app.get("/", (req, res) => {
+    res.send("PeerJS Signaling Server is running...");
+});
+
+// Start server
+server.listen(PORT, () => {
+    console.log(`🚀 Signaling server running on port ${PORT}`);
 });
