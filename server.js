@@ -26,6 +26,13 @@ app.get("/data", (req, res) => {
 app.post("/data", (req, res) => {
     data[Number(req.body.mode) - 1] = req.body;
 
+    if (req.body.mode === '3') {
+        data[0] = null;
+        data[1] = null;
+    } else {
+        data[2] = null;
+    }
+
     res.json();
 });
 app.post("/clear-data", (req, res) => {
